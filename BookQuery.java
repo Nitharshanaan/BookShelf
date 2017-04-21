@@ -163,9 +163,44 @@ public final class BookQuery {
                 String title = info.getString("title");
 
                 // Extract the value for the key called "publisher"
-                String publisher = info.getString("publisher");
 
-                String authors = info.getString("printType");
+                String publisher = "";
+
+                if (info.has("publisher")) {
+                    publisher = info.getString("publisher");
+                } else {
+                    publisher = "Publisher info not found";
+                }
+
+
+                String bookAuthorsString = " ";
+
+                if (info.has("authors")) {
+                    //  Get the author's array
+                    JSONArray authorsArray = info.getJSONArray("authors");
+                    // Count how many authors you have
+                    int countAuthors = authorsArray.length();
+                    // Then loop through the array to get each author and build a string
+                    for (int e = 0; e < countAuthors; e++) {
+                        // Get the author from the array (notice that getString is using the counter e)
+                        String author = authorsArray.getString(e);
+
+                        // If the string is empty get the author ( this is the first iteration)
+                        if (bookAuthorsString == " ") {
+                            bookAuthorsString = author;
+                            // If the counter equals the total authors, concatenate the author with " and " ( this is the last iteration )
+                        } else if (e == countAuthors - 1) {
+                            bookAuthorsString = bookAuthorsString + " and " + author;
+                            // Else concatenate the author with a comma ( these are all the iterations between the first and final )
+                        } else {
+                            bookAuthorsString = bookAuthorsString + ", " + author;
+                        }
+                    }
+                } else {
+                    bookAuthorsString = "Author info not available for this book";
+                }
+
+                String authors = bookAuthorsString;
 
                 // For a given book, extract the JSONObject associated with the
                 // key called "imageLinks", which represents a list of all properties
